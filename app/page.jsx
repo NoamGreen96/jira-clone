@@ -1,9 +1,12 @@
-import { ChevronRight, Layout, Calendar, BarChart } from "lucide-react";
+import { ChevronRight, Layout, Calendar, BarChart, ArrowRight } from "lucide-react";
 import { Button } from "../components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "../components/ui/card";
 import CompanyCarousel from "../components/company-carousel";
+import faqs from '../data/faqs';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../components/ui/accordion";
+
 
 const features = [
   {
@@ -46,7 +49,7 @@ export default function Home() {
         </h1>
         <p>Empower your team with our intutive project managment solution.</p>
         <Link href='/onboarding'>
-          <Button size="lg" variant='secondary' className="mr-4">
+          <Button size="lg" className="mr-4 mt-12">
             Get Started
             <ChevronRight size={18} className="ml-1" />
           </Button>
@@ -80,6 +83,35 @@ export default function Home() {
           <CompanyCarousel />
         </div>
       </section>
+
+      <section className="bg-gray-900 py-20 px-5">
+        <div className="container mx-auto">
+          <h3 className="text-3xl font-bold mb-12 text-center">Frequenyly Asked Questions</h3>
+          <Accordion type="single" collapsible className="w-full">
+            {faqs.map((faq, index) => (
+              <AccordionItem key={index} value={`item-${index}`}>
+                <AccordionTrigger>{faq.question}</AccordionTrigger>
+                <AccordionContent>
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
+
+      <section className="py-20 text-center px-5">
+        <div className="container mx-auto">
+          <h3 className="text-3xl font-bold mb-6">Ready to Transform Your Workflow?</h3>
+          <p className="text-xl mb-12">Join thousands of teams alraedy using ZCRUM to streamline their projects and boost productivity </p>
+          <Link href='/onboarding'>
+            <Button size='lg' className='animate-bounce'>
+              Start for Free <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
     </div>
   )
 }

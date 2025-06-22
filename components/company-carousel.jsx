@@ -4,7 +4,6 @@ import React from 'react'
 import { Carousel, CarouselContent, CarouselItem } from './ui/carousel'
 import companies from '../data/companies'
 import Autoplay from 'embla-carousel-autoplay'
-import faqs from '../data/faqs'
 import Image from 'next/image'
 
 const CompanyCarousel = () => {
