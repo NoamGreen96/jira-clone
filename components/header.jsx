@@ -1,11 +1,13 @@
 import { SignedOut, SignInButton, SignedIn } from "@clerk/nextjs"
 import Image from "next/image"
 import Link from "next/link"
-import { Button } from "./ui/button"
 import { PenBox } from "lucide-react"
 import UserMenu from "./user-menu"
+import { checkUser } from "@/lib/check-user"
+import { Button } from "./ui/button"
 
-function Header() {
+const Header = async () => {
+    await checkUser();
     return (
         <header className="container mx-auto">
             <nav className="py-6 px-4 flex justify-between items-center">
