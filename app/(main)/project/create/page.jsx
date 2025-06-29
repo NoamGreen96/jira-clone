@@ -42,7 +42,7 @@ const CreateProjectPage = () => {
 
   useEffect(() => {
     if (project) {
-      toast.success('Project created succsesfuly!')
+      toast.success('Project created successfuly!')
       router.push(`/project/${project.id}`)
     }
   }, [loading])

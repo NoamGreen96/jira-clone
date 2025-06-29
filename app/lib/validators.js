@@ -7,3 +7,12 @@ export const projectScema = z.object({
         .max(10, "Project key must be 10 characters or less"),
     description: z.string().max(500, "Description must be 500 characters or less").optional(),
 })
+
+
+export const sprintSchema = z.object({
+    name: z.string().min(1, "Sprint name is required"),
+    startDate: z.date(),
+    endDate: z.date()
+
+
+})
