@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
+import { GripVertical } from "lucide-react";
+
 
 const priorityColor = {
   LOW: "bg-green-600",
@@ -25,32 +27,35 @@ const IssueCard = ({ issue, showStatus = false, onDelete = () => { }, onUpdate =
   });
 
   return (
-    <Card className="cursor-pointer hover:shadow-md transition-shadow bg-slate-950 rounded-lg border border-slate-800 p-0">
-      <div className={`h-1 w-full ${priorityColor[issue.priority]}`} />
+    <>
+      <Card className="cursor-pointer hover:shadow-md transition-shadow bg-slate-950 rounded-lg border border-slate-800 p-0 ">
+        <div className={`h-1 w-full ${priorityColor[issue.priority]} rounded-lg`} />
 
-      <CardHeader className="px-4 ">
-        <CardTitle className="capitalize text-white text-lg font-semibold tracking-tight">
-          {issue.title}
-        </CardTitle>
-      </CardHeader>
+        <CardHeader className="px-4 ">
+          <CardTitle className="capitalize text-white text-lg font-semibold tracking-tight">
+            {issue.title}
+          </CardTitle>
+        </CardHeader>
 
-      <CardContent className="flex items-center gap-2 px-4">
-        {showStatus && (
-          <Badge variant="secondary" className="rounded-full text-xs">
-            {issue.status}
+        <CardContent className="flex items-center gap-2 px-4">
+          {showStatus && (
+            <Badge variant="secondary" className="rounded-full">
+              {issue.status}
+            </Badge>
+          )}
+          <Badge variant="secondary" className="rounded-full text-xs capitalize -mt-6 ">
+            {issue.priority}
           </Badge>
-        )}
-        <Badge variant="secondary" className="rounded-full text-xs capitalize">
-          {issue.priority}
-        </Badge>
-      </CardContent>
+        </CardContent>
 
-      <CardFooter className="flex flex-col items-start space-y-2 px-4 pb-4 ">
-        <UserAvatar user={issue.assignee} />
-        <div className="text-xs text-gray-400">Created {created}</div>
-      </CardFooter>
-    </Card>
+        <CardFooter className="flex flex-col items-start space-y-2 px-4 pb-4 ">
+          <UserAvatar user={issue.assignee} />
+          <div className="text-xs text-gray-400">Created {created}</div>
+        </CardFooter>
+      </Card>
 
+      {isDialogOpen && <></>}
+    </>
   );
 };
 

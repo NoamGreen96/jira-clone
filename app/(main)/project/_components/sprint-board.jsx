@@ -8,9 +8,18 @@ import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import IssueCreationDrawer from './create-issue'
 import useFetch from '@/hooks/use-fetch'
-import { getIssuesForSprint } from '@/actions/issues'
+import { getIssuesForSprint, updateIssueOrder } from '@/actions/issues'
 import { BarLoader } from 'react-spinners'
 import IssueCard from './issue-card'
+import { toast } from 'sonner'
+
+const reorder = (list, startIndex, endIndex) => {
+    const result = Array.from(list)
+    const [removed] = result.splice(startIndex, 1)
+    result.splice(endIndex, 0, removed)
+
+    return result
+}
 
 const SprintBoard = ({ sprints, projectId, orgId }) => {
     const [currentSprint, setCurrentSprint] = useState(
@@ -45,7 +54,71 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
         fetchIssues(currentSprint.id)
     }
 
-    const onDragEnd = () => { }
+    const {
+        fn: updateIssueOrderFn,
+        loading: updateIssuesLoading,
+        error: updateIssuesError,
+    } = useFetch(updateIssueOrder);
+
+
+    const onDragEnd = async (result) => {
+        if (currentSprint.status === "PLANNED") {
+            toast.warning("Start the sprint to update board");
+            return;
+        }
+        if (currentSprint.status === "COMPLETED") {
+            toast.warning("Cannot update board after sprint end");
+            return;
+        }
+
+        const { destination, source } = result
+
+        if (!destination) return
+        if (destination.droppableId === source.droppableId && destination.index === source.index) return
+
+        const newOrderData = [...issues]
+
+        // source and destination lists
+        const sourceList = newOrderData.filter(
+            (list) => list.status === source.droppableId
+        )
+
+        const destinationList = newOrderData.filter(
+            (list) => list.status === destination.droppableId
+        )
+
+        // if source and dest same
+        if (source.droppableId === destination.droppableId) {
+            const reorderCards = reorder(
+                sourceList,
+                source.index,
+                destination.index
+            )
+            reorderCards.forEach((card, i) => {
+                card.order = i
+            })
+        } else {
+            const [movedCard] = sourceList.splice(source.index, 1)
+
+            movedCard.status = destination.droppableId
+
+            destinationList.splice(destination.index, 0, movedCard)
+
+            sourceList.forEach((card, i) => {
+                card.order = i
+            })
+
+            destinationList.forEach((card, i) => {
+                card.order = i
+            })
+        }
+
+        const sortedIssues = newOrderData.sort((a, b) => a.order - b.order)
+        setIssues(newOrderData, sortedIssues)
+
+        updateIssueOrderFn(sortedIssues)
+
+    };
 
     if (issuesError) return <div>Error loading issues</div>
 
@@ -58,7 +131,12 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
                 sprints={sprints}
                 projectId={projectId}
             />
-            {!issues && !issuesLoading &&
+
+            {updateIssuesError &&
+                <p className='text-red-500 mt-2'>{updateIssuesError.message}</p>
+            }
+
+            {(updateIssuesLoading || issuesLoading) &&
                 (<BarLoader className='mt-4' width={"100%"} color='#36d7b7' />)}
 
             {/* Kanban Board */}
@@ -69,8 +147,8 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
                             {(provided) => (
                                 <div ref={provided.innerRef}
                                     {...provided.droppableProps}
-                                    className='space-y-2' 
-                                    >
+                                    className='space-y-2'
+                                >
                                     <h3 className='font-semibold mb-2 text-center' >{column.name}</h3>
                                     {provided.placeholder}
 
