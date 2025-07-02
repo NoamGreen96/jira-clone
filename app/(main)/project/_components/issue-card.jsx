@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
-import { GripVertical } from "lucide-react";
+import { useRouter } from 'next/navigation';
+import IssueDetailsDialog from './issue-detail-dialog';
 
 
 const priorityColor = {
@@ -19,8 +20,26 @@ const priorityColor = {
   URGENT: "bg-red-400",
 };
 
+const priorityBorder = {
+  LOW: "border-green-600",
+  MEDIUM: "border-yellow-300",
+  HIGH: "border-orange-400",
+  URGENT: "border-red-400",
+};
+
 const IssueCard = ({ issue, showStatus = false, onDelete = () => { }, onUpdate = () => { } }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const router = useRouter()
+
+  const onDeleteHandler = (...params) => {
+    router.refresh()
+    onDelete(...params)
+  }
+
+  const onUpdateHandler = (...params) => {
+    router.refresh()
+    onUpdate(...params)
+  }
 
   const created = formatDistanceToNow(new Date(issue.createdAt), {
     addSuffix: true
@@ -28,7 +47,9 @@ const IssueCard = ({ issue, showStatus = false, onDelete = () => { }, onUpdate =
 
   return (
     <>
-      <Card className="cursor-pointer hover:shadow-md transition-shadow bg-slate-950 rounded-lg border border-slate-800 p-0 ">
+      <Card className="cursor-pointer hover:shadow-md transition-shadow bg-slate-950 rounded-lg border border-slate-800 p-0 "
+        onClick={() => setIsDialogOpen(true)}
+      >
         <div className={`h-1 w-full ${priorityColor[issue.priority]} rounded-lg`} />
 
         <CardHeader className="px-4 ">
@@ -54,7 +75,16 @@ const IssueCard = ({ issue, showStatus = false, onDelete = () => { }, onUpdate =
         </CardFooter>
       </Card>
 
-      {isDialogOpen && <></>}
+      {isDialogOpen && (
+        <IssueDetailsDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          issue={issue}
+          onDelete={onDeleteHandler}
+          onUpdate={onUpdateHandler}
+          borderCol={priorityBorder[issue.priority]}
+
+        />)}
     </>
   );
 };

@@ -12,6 +12,7 @@ import { getIssuesForSprint, updateIssueOrder } from '@/actions/issues'
 import { BarLoader } from 'react-spinners'
 import IssueCard from './issue-card'
 import { toast } from 'sonner'
+import BoardFilters from './board-filters'
 
 const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list)
@@ -49,6 +50,10 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
 
 
     const [filteredIssues, setFilteredIssues] = useState(issues)
+
+    const handleFilterChange = (newFilteredIssues) => {
+        setFilteredIssues(newFilteredIssues)
+    }
 
     const handleIssueCreated = () => {
         fetchIssues(currentSprint.id)
@@ -132,6 +137,10 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
                 projectId={projectId}
             />
 
+            {issues && !issuesLoading && (
+                <BoardFilters issues={issues} onFilterChange={handleFilterChange} />
+            )}
+
             {updateIssuesError &&
                 <p className='text-red-500 mt-2'>{updateIssuesError.message}</p>
             }
@@ -159,6 +168,7 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
                                                 key={issue.id}
                                                 draggableId={issue.id}
                                                 index={index}
+                                                isDragDisabled={updateIssuesLoading}
                                             >
                                                 {(provided) => {
                                                     return (
@@ -168,7 +178,15 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
                                                             {...provided.dragHandleProps}
                                                         >
 
-                                                            <IssueCard issue={issue} />
+                                                            <IssueCard issue={issue}
+                                                                onDelete={() => fetchIssues(currentSprint.id)}
+                                                                onUpdate={(updated) => {
+                                                                    setIssues((issues) =>
+                                                                        issues.map((issue) =>
+                                                                            issue.id === updated.id ? updated : issue
+                                                                        )
+                                                                    )
+                                                                }} />
                                                         </div>
                                                     )
                                                 }}
