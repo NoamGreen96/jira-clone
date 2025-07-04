@@ -11,7 +11,6 @@ import {
     AlertDialogAction,
     AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
-
 import { deleteProject } from "@/actions/projects";
 import { Button } from "@/components/ui/button";
 import useFetch from "@/hooks/use-fetch";
@@ -33,7 +32,6 @@ const DeleteProject = ({ projectId }) => {
     } = useFetch(deleteProject);
 
     const isAdmin = membership?.role === "org:admin";
-    if (!isAdmin) return null;
 
     useEffect(() => {
         if (deleted?.success) {
@@ -41,6 +39,10 @@ const DeleteProject = ({ projectId }) => {
             router.refresh();
         }
     }, [deleted, router]);
+
+    if (!isAdmin) {
+        return <></>; 
+    }
 
     return (
         <AlertDialog>

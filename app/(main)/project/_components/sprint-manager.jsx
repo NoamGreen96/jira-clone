@@ -4,13 +4,16 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import useFetch from '@/hooks/use-fetch'
 import { format, formatDistanceToNow, isAfter, isBefore } from 'date-fns'
+import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { BarLoader } from 'react-spinners'
 
 const SprintManager = ({ sprint, sprints, setSprint, projectId }) => {
     const [status, setStatus] = useState(sprint.status)
+    const router = useRouter()
 
-
+    const searchParams = useSearchParams()
     const startDate = new Date(sprint.startDate)
     const endDate = new Date(sprint.endDate)
     const now = new Date()
@@ -34,10 +37,24 @@ const SprintManager = ({ sprint, sprints, setSprint, projectId }) => {
         }
     }, [updatedStatus, loading])
 
+    useEffect(() => {
+        const sprintId = searchParams.get("Sprint")
+        if (sprintId && sprintId !== sprint.id) {
+            const selectedSprint = sprints.find((s) => s.id === sprintId);
+            if (selectedSprint) {
+                setSprint(selectedSprint);
+                setStatus(selectedSprint.status);
+            }
+        }
+
+    }, [searchParams, sprints])
+
+
     const handleSprintChange = (value) => {
         const selectedSprint = sprints.find((s) => s.id === value);
         setSprint(selectedSprint)
         setStatus(selectedSprint.status)
+        router.replace(`/project/${projectId}`, undefined, { shallow: true })
     }
 
     const getStatusText = () => {

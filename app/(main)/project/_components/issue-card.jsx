@@ -1,3 +1,5 @@
+"use client"
+
 import UserAvatar from './user-avatar';
 import React, { useState } from 'react';
 import {
