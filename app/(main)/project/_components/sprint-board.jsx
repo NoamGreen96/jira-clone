@@ -162,7 +162,7 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
                                     {provided.placeholder}
 
                                     {/* Issues */}
-                                    {issues?.filter((issue) => issue.status === column.key)
+                                    {filteredIssues?.filter((issue) => issue.status === column.key)
                                         .map((issue, index) => (
                                             <Draggable
                                                 key={issue.id}
