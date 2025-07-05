@@ -13,10 +13,8 @@ export default clerkMiddleware((auth, req) => {
   const { userId, orgId } = auth();
 
   if (!userId && isProtectedRoute(req)) {
-    console.log(req)
     const signInUrl = new URL("/sign-in", req.url);
     signInUrl.searchParams.set("redirect_url", req.url);
-
     return NextResponse.redirect(signInUrl);
   }
 
@@ -36,3 +34,5 @@ export const config = {
     "/(api|trpc)(.*)",
   ],
 };
+
+
