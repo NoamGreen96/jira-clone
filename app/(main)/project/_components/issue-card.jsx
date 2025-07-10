@@ -62,11 +62,11 @@ const IssueCard = ({ issue, showStatus = false, onDelete = () => { }, onUpdate =
 
         <CardContent className="flex items-center gap-2 px-4">
           {showStatus && (
-            <Badge variant="secondary" className="rounded-full">
+            <Badge variant="secondary" className="rounded-full text-xs capitalize">
               {issue.status}
             </Badge>
           )}
-          <Badge variant="secondary" className="rounded-full text-xs capitalize -mt-6 ">
+          <Badge variant="secondary" className="rounded-full text-xs capitalize">
             {issue.priority}
           </Badge>
         </CardContent>

@@ -29,7 +29,6 @@ const Header = async () => {
                             <Button variant='outline'>Login</Button>
                         </SignInButton>
                     </SignedOut>
-
                     <SignedIn>
                         <UserMenu />
                     </SignedIn>
